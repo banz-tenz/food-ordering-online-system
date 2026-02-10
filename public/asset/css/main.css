@@ -1,0 +1,8 @@
+.hide{
+    display: none;
+    transition: all linear .3s;
+}
+
+.show {
+    display: block;
+}
