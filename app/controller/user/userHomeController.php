@@ -133,17 +133,48 @@ class userHomeController
         echo $output;
     }
 
-    public function showCart(){
+    public function showCart()
+    {
         $userId = $_GET['id'] ?? null;
-        if($userId){
+        if ($userId) {
             require_once __DIR__ . "/../../view/user/cart.php";
         }
     }
 
-    public function showOrder(){
+    public function showOrder()
+    {
         $userId = $_GET['id'] ?? null;
-        if($userId){
+        if ($userId) {
             require_once __DIR__ . "/../../view/user/order.php";
         }
+    }
+
+    public function addProduct()
+    {
+        // session_start();
+
+        if (!isset($_POST['product_id'])) {
+            echo json_encode(["status" => "error", "message" => "Product ID missing"]);
+            return;
+        }
+
+        $product_id = intval($_POST['product_id']);
+
+        // Create cart if not exist
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
+
+        // Add product
+        if (!isset($_SESSION['cart'][$product_id])) {
+            $_SESSION['cart'][$product_id] = 1;
+        } else {
+            $_SESSION['cart'][$product_id]++;
+        }
+
+        echo json_encode([
+            "status" => "success",
+            "cart_count" => array_sum($_SESSION['cart'])
+        ]);
     }
 }
