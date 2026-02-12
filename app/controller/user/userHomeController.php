@@ -132,4 +132,18 @@ class userHomeController
 
         echo $output;
     }
+
+    public function showCart(){
+        $userId = $_GET['id'] ?? null;
+        if($userId){
+            require_once __DIR__ . "/../../view/user/cart.php";
+        }
+    }
+
+    public function showOrder(){
+        $userId = $_GET['id'] ?? null;
+        if($userId){
+            require_once __DIR__ . "/../../view/user/order.php";
+        }
+    }
 }
