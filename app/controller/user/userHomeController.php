@@ -135,11 +135,57 @@ class userHomeController
 
     public function showCart()
     {
+        // session_start(); // make sure session is started
         $userId = $_GET['id'] ?? null;
+
         if ($userId) {
+            $products = [];
+            $totalPrice = 0;
+
+            if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+                foreach ($_SESSION['cart'] as $productId => $quantity) {
+                    $product = $this->productModel->find($productId);
+
+                    if ($product) {
+                        // Attach quantity and subtotal to the product
+                        $product['quantity'] = $quantity;
+                        $product['subtotal'] = $quantity * $product['price'];
+
+                        $totalPrice += $product['subtotal'];
+
+                        $products[] = $product;
+                    }
+                }
+            }
+
             require_once __DIR__ . "/../../view/user/cart.php";
+        } else {
+            header("location: /user/create");
+            exit();
         }
     }
+
+
+    public function removeFromCart()
+    {
+        // session_start();
+
+        if (isset($_POST['product_id'])) {
+            $productId = intval($_POST['product_id']);
+
+            if (isset($_SESSION['cart'][$productId])) {
+                unset($_SESSION['cart'][$productId]); // remove the product
+            }
+
+            // Redirect back to cart page
+            header("Location: /user/cart?id=" . ($_SESSION['userid'] ?? ''));
+            exit();
+        } else {
+            echo "Product ID missing!";
+        }
+    }
+
+
 
     public function showOrder()
     {

@@ -120,6 +120,8 @@ Route::get('/user/cart', [userHomeController::class, 'showCart']);
 // Route::post('/user/cart/add', [usersController::class, 'addProduct']);
 // Route::post('/user/cart/add', [usersController::class, 'addProduct']);
 Route::post('/user/cart/add', [userHomeController::class, 'addProduct']);
+Route::post('/user/cart/remove', [userHomeController::class, 'removeFromCart']);
+
 
 
 
