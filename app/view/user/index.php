@@ -18,9 +18,17 @@ require_once __DIR__ . "/../layout/header.php";
 
         <!-- Quick Actions / Categories -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+            <a href="#"
+                data-cateid="0"
+                class="category-filter bg-white shadow rounded-lg p-4 flex flex-col items-center justify-center hover:bg-green-50 transition">
+
+                <span class="font-semibold text-gray-700">
+                    All
+                </span>
+            </a>
             <?php foreach ($categories as $category): ?>
                 <a href="#"
-                    data-id="<?= $category['id'] ?>"
+                    data-cateid="<?= $category['id'] ?>"
                     class="category-filter bg-white shadow rounded-lg p-4 flex flex-col items-center justify-center hover:bg-green-50 transition">
 
                     <span class="font-semibold text-gray-700">
@@ -34,7 +42,7 @@ require_once __DIR__ . "/../layout/header.php";
         <!-- Featured Menu Section -->
         <div id="menuContainer">
             <h3 class="text-2xl font-bold text-gray-800 mb-4">Featured Menu</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products">
                 <?php foreach ($featured as $item): ?>
                     <div class="bg-white shadow rounded-lg overflow-hidden hover:scale-105 transform transition duration-300">
                         <img
@@ -68,6 +76,25 @@ require_once __DIR__ . "/../layout/header.php";
     </main>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const categoryLinks = document.querySelectorAll(".category-filter");
+        const productsDiv = document.getElementById("products");
+
+        categoryLinks.forEach(link => {
+            link.addEventListener("click", function(e) {
+                e.preventDefault();
+                const cateId = this.dataset.cateid;
+
+                fetch(`/user/filter?cateId=${cateId}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        productsDiv.innerHTML = html;
+                    });
+            });
+        });
+    });
+</script>
 
 <?php
 require_once __DIR__ . "/../layout/footer.php";

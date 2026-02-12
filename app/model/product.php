@@ -111,6 +111,20 @@ class ProductModel
         }
     }
 
+    public function filterByCate($cateId)
+    {
+        if ($cateId == 0) {
+            $stmt = $this->conn->prepare("SELECT * FROM products");
+        } else {
+            $stmt = $this->conn->prepare("SELECT * FROM products WHERE category_id = :cateId");
+            $stmt->bindParam(':cateId', $cateId, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+
 
     public function delete($id)
     {

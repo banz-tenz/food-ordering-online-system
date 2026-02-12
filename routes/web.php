@@ -114,4 +114,4 @@ Route::get('/user/home', [userHomeController::class, 'index']);
 Route::get('/user/profile', [userHomeController::class, 'show']);
 Route::get('/user/edit-profile', [userHomeController::class, 'edit']);
 Route::post('/user/update-profile', [userHomeController::class, 'updateProfile']);
-Route::get('/user/filter-menu', [userHomeController::class, 'filterMenu']);
+Route::get('/user/filter', [userHomeController::class, 'filterMenu']);

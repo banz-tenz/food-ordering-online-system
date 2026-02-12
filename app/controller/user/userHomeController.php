@@ -109,4 +109,27 @@ class userHomeController
         }
     }
 
+    public function filterMenu()
+    {
+        $cateId = isset($_GET['cateId']) ? (int)$_GET['cateId'] : 0;
+
+        $products = $this->productModel->filterByCate($cateId);
+
+        $output = '';
+        if ($products) {
+            foreach ($products as $item) {
+                $output .= '<div class="bg-white shadow rounded-lg overflow-hidden hover:scale-105 transform transition duration-300">';
+                $output .= '<img src="data:image/jpeg;base64,' . base64_encode($item['image']) . '" class="w-32 h-32 object-cover rounded-lg border" alt="' . htmlspecialchars($item['name']) . ' Image">';
+                $output .= '<div class="p-4">';
+                $output .= '<h4 class="font-semibold text-lg text-gray-800">' . htmlspecialchars($item['name']) . '</h4>';
+                $output .= '<p class="text-green-600 font-bold mt-1">' . htmlspecialchars($item['price']) . '</p>';
+                $output .= '<a href="/user/cart/add.php?id=' . $item['id'] . '" class="mt-3 inline-block w-full text-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">Add to Cart</a>';
+                $output .= '</div></div>';
+            }
+        } else {
+            $output = '<p class="text-gray-500 col-span-full">No products found in this category.</p>';
+        }
+
+        echo $output;
+    }
 }
