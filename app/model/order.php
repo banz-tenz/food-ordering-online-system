@@ -71,4 +71,28 @@ class orderModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function createOrder($userId, $totalPrice, $status = 'pending'){
+        $sql = "INSERT INTO {$this->table} (user_id, total_price, status) VALUES(:userId, :totalPrice, :status)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+                'userId'=>$userId,
+                'totalPrice'=>$totalPrice,
+                'status'=> $status,
+            ]);
+        return $this->conn->lastInsertId();
+        
+    }
+
+
+    public function createOrderItems($orderId, $productId, $quantity, $subTotalPrice){
+        $sql = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES(:orderId, :productId, :quantity, :subTotalPrice)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'orderId'=>$orderId,
+            'productId'=>$productId,
+            'quantity'=>$quantity,
+            'subTotalPrice'=>$subTotalPrice,
+        ]);
+    }
 }

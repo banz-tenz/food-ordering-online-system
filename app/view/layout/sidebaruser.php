@@ -9,27 +9,30 @@
         <!-- Navigation -->
         <nav class="mt-6 px-4 space-y-2">
 
-            <a href="/user/home" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($_SERVER['REQUEST_URI'] == '/user/home') ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
+            <?php
+            // Get current path without query string
+            $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            ?>
+
+            <a href="/user/home" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($currentPath == '/user/home') ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
                 <span>📋</span>
                 Menu
             </a>
 
-            <a href="/user/cart?id=<?= $_SESSION['userid'] ?>" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= (strpos($_SERVER['REQUEST_URI'], '/user/cart') !== false) ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
+            <a href="/user/cart?id=<?= $_SESSION['userid'] ?>" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($currentPath == '/user/cart') ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
                 <span>🛒</span>
                 My Cart
             </a>
 
-            <a href="/user/orders?id=<?= $_SESSION['userid'] ?>" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($_SERVER['REQUEST_URI'] == '/user/orders') ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
+            <a href="/user/orders?id=<?= $_SESSION['userid'] ?>" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($currentPath == '/user/orders') ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
                 <span>📦</span>
                 Order History
             </a>
 
-            <a href="/user/profile?id=<?= $_SESSION['userid'] ?>"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($_SERVER['REQUEST_URI'] == '/user/profile?id=' . $_SESSION['userid']) ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
+            <a href="/user/profile?id=<?= $_SESSION['userid'] ?>" class="flex items-center gap-3 px-4 py-3 rounded-lg <?= ($currentPath == '/user/profile') ? 'bg-green-100 text-green-600 font-medium' : 'hover:bg-gray-100 transition' ?>">
                 <span>👤</span>
                 Profile
             </a>
-
 
         </nav>
     </div>

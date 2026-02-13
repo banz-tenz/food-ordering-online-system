@@ -3,6 +3,7 @@
 require_once __DIR__ . "/../../model/order.php";
 require_once __DIR__ . "/../../model/product.php";
 require_once __DIR__ . "/../../model/user.php";
+require_once __DIR__ . "/../../model/order.php";
 
 class userHomeController
 {
@@ -10,12 +11,14 @@ class userHomeController
     private $cateModel;
     private $productModel;
     private $userModel;
+    private $orderModel;
 
     public function __construct()
     {
         $this->cateModel = new cateModel;
         $this->productModel = new ProductModel;
         $this->userModel = new UserModel;
+        $this->orderModel = new orderModel;
     }
 
     public function index()
@@ -216,16 +219,6 @@ class userHomeController
         }
     }
 
-
-
-    public function showOrder()
-    {
-        $userId = $_GET['id'] ?? null;
-        if ($userId) {
-            require_once __DIR__ . "/../../view/user/order.php";
-        }
-    }
-
     public function addProduct()
     {
         // session_start();
@@ -253,5 +246,72 @@ class userHomeController
             "status" => "success",
             "cart_count" => array_sum($_SESSION['cart'])
         ]);
+    }
+
+
+
+    // go to checkout page and show sammary order
+    public function checkout()
+    {
+        $products = [];
+        $totalPrice = 0;
+
+        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+            foreach ($_SESSION['cart'] as $productId => $quantity) {
+                $product = $this->productModel->find($productId);
+
+                if ($product) {
+                    // Attach quantity and subtotal to the product
+                    $product['quantity'] = $quantity;
+                    $product['subtotal'] = $quantity * $product['price'];
+
+                    $totalPrice += $product['subtotal'];
+
+                    $products[] = $product;
+                }
+            }
+        }
+
+        require_once __DIR__ . "/../../view/user/checkout.php";
+    }
+
+    // start order
+    public function placeOrder()
+    {
+        $userId = $_SESSION['userid'];
+        if (!empty($_SESSION['cart']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $totalPrice = $_POST['total_price'];
+            $userId = $_SESSION['userid'];
+            $status = $_POST['status'];
+
+            $lastOrderId = $this->orderModel->createOrder($userId, $totalPrice, $status);
+
+            foreach ($_SESSION['cart'] as $productId => $quantity) {
+                $product = $this->productModel->find($productId);
+
+                // if ($product) {
+                //     // Attach quantity and subtotal to the product
+                //     $product['subtotal'] = $quantity * $product['price'];
+
+                $this->orderModel->createOrderItems($lastOrderId, $productId, $quantity, $product['subtotal']);
+                // }
+            }
+        }
+
+        header("location: /user/orders?id={$_SESSION['userid']}");
+        exit();
+    }
+
+    
+    public function showOrder()
+    {
+        $userId = $_GET['id'] ?? null;
+        if (!$userId) {
+            header("/user/create");
+            exit();
+        }
+        
+
+        require_once __DIR__ . "/../../view/user/order.php";
     }
 }

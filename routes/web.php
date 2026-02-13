@@ -125,7 +125,11 @@ Route::post('/user/cart/remove', [userHomeController::class, 'removeFromCart']);
 Route::post('/user/cart/increase', [userHomeController::class, 'increaseQty']);
 Route::post('/user/cart/decrease', [userHomeController::class, 'decreaseQty']);
 
+Route::get('/user/checkout', [userHomeController::class, 'checkout']);
+Route::post('/user/order/place', [userHomeController::class, 'placeOrder']);
 
 
 
-Route::get('/user/orders', [userHomeController::class, 'showCart']);
+
+
+Route::get('/user/orders', [userHomeController::class, 'showOrder']);

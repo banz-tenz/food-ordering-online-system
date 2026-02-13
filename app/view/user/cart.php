@@ -28,7 +28,13 @@ require_once __DIR__ . "/../layout/header.php";
                             <?php foreach ($products as $index => $item): ?>
                                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                                     <td class="px-4 py-2"><?= $index + 1 ?></td>
-                                    <td class="px-4 py-2"><?= htmlspecialchars($item['name']) ?></td>
+                                    <td class="px-4 py-2 flex items-center justify-start gap-4">
+                                        <img
+                                            src="data:image/jpeg;base64,<?= base64_encode($item['image']) ?>"
+                                            class="w-12 h-12  object-cover rounded-md "
+                                            alt="<?= $item['name'] ?> Image">
+                                        <?= htmlspecialchars($item['name']) ?>
+                                    </td>
                                     <td class="px-4 py-2"><?= number_format($item['price'], 2) ?> $</td>
                                     <td class="px-4 py-2">
                                         <div class="flex items-center gap-2">
