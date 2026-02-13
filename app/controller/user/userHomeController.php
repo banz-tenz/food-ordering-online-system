@@ -289,20 +289,20 @@ class userHomeController
             foreach ($_SESSION['cart'] as $productId => $quantity) {
                 $product = $this->productModel->find($productId);
 
-                // if ($product) {
-                //     // Attach quantity and subtotal to the product
-                //     $product['subtotal'] = $quantity * $product['price'];
+                if ($product) {
+                    // Attach quantity and subtotal to the product
+                    // $product['subtotal'] = $quantity * $product['price'];
 
-                $this->orderModel->createOrderItems($lastOrderId, $productId, $quantity, $product['subtotal']);
-                // }
+                    $this->orderModel->createOrderItems($lastOrderId, $productId, $quantity);
+                }
             }
         }
-
+        unset($_SESSION['cart']);
         header("location: /user/orders?id={$_SESSION['userid']}");
         exit();
     }
 
-    
+
     public function showOrder()
     {
         $userId = $_GET['id'] ?? null;
@@ -314,5 +314,32 @@ class userHomeController
         $orders = $this->orderModel->findOrderByUserId($userId);
 
         require_once __DIR__ . "/../../view/user/order.php";
+    }
+
+    public function showOrderDetail()
+    {
+        // session_start();
+        $userId = $_SESSION['userid'];
+        $orderId = $_GET['id'] ?? null;
+
+        if (!$orderId) {
+            header("Location: /user/orders?id=$userId");
+            exit();
+        }
+
+        $orderItems = $this->orderModel->findOrderWithItems($orderId, $userId);
+
+        if (!$orderItems) {
+            header("Location: /user/orders?id=$userId");
+            exit();
+        }
+
+        // Calculate total price
+        $totalPrice = 0;
+        foreach ($orderItems as $item) {
+            $totalPrice += $item['subtotal'];
+        }
+
+        require_once __DIR__ . "/../../view/user/detailCart.php";
     }
 }

@@ -74,21 +74,7 @@ class orderModel
 
     public function findOrderByUserId($id)
     {
-        $sql = "SELECT o.id AS order_id,
-                   o.created_at,
-                   o.status,
-                   u.username,
-                   u.useremail,
-                   p.name AS product_name,
-                   p.price AS product_price,
-                   oi.quantity,
-                   (p.price * oi.quantity) AS subtotal
-            FROM orders o
-            JOIN users u ON u.id = o.user_id
-            JOIN order_items oi ON oi.order_id = o.id
-            JOIN products p ON p.id = oi.product_id
-            WHERE u.id = :userId
-            ORDER BY o.created_at DESC";
+        $sql = "SELECT * FROM orders WHERE user_id = :userId ORDER BY created_at DESC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['userId' => $id]);
@@ -110,15 +96,41 @@ class orderModel
     }
 
 
-    public function createOrderItems($orderId, $productId, $quantity, $subTotalPrice)
+    public function createOrderItems($orderId, $productId, $quantity)
     {
-        $sql = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES(:orderId, :productId, :quantity, :subTotalPrice)";
+        $sql = "INSERT INTO order_items (order_id, product_id, quantity) VALUES(:orderId, :productId, :quantity)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
             'orderId' => $orderId,
             'productId' => $productId,
             'quantity' => $quantity,
-            'subTotalPrice' => $subTotalPrice,
         ]);
+    }
+
+    public function findOrderWithItems($orderId, $userId)
+    {
+        $sql = "SELECT o.id AS order_id,
+                   o.created_at,
+                   o.status,
+                   u.username,
+                   u.useremail,
+                   p.image,
+                   p.name AS product_name,
+                   p.price AS product_price,
+                   oi.quantity,
+                   (p.price * oi.quantity) AS subtotal
+            FROM orders o
+            JOIN users u ON u.id = o.user_id
+            JOIN order_items oi ON oi.order_id = o.id
+            JOIN products p ON p.id = oi.product_id
+            WHERE o.id = :orderId AND u.id = :userId";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'orderId' => $orderId,
+            'userId' => $userId
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

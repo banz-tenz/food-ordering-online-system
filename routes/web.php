@@ -127,6 +127,7 @@ Route::post('/user/cart/decrease', [userHomeController::class, 'decreaseQty']);
 
 Route::get('/user/checkout', [userHomeController::class, 'checkout']);
 Route::post('/user/order/place', [userHomeController::class, 'placeOrder']);
+Route::get('/user/order/details', [userHomeController::class, 'showOrderDetail']);
 
 
 
