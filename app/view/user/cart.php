@@ -30,13 +30,34 @@ require_once __DIR__ . "/../layout/header.php";
                                     <td class="px-4 py-2"><?= $index + 1 ?></td>
                                     <td class="px-4 py-2"><?= htmlspecialchars($item['name']) ?></td>
                                     <td class="px-4 py-2"><?= number_format($item['price'], 2) ?> $</td>
-                                    <td class="px-4 py-2"><?= $item['quantity'] ?></td>
+                                    <td class="px-4 py-2">
+                                        <div class="flex items-center gap-2">
+
+                                            <!-- Minus -->
+                                            <button
+                                                class="minus-btn flex items-center justify-center w-6 h-6 text-white bg-red-500 rounded-full hover:bg-red-600 transition <?= $item['quantity'] == 1 ? 'opacity-40 cursor-not-allowed' : '' ?>"
+                                                data-id="<?= $item['id'] ?>">
+                                                <i class="fa-solid fa-minus text-xs"></i>
+                                            </button>
+
+                                            <!-- Quantity -->
+                                            <span class="font-semibold px-2"><?= $item['quantity'] ?></span>
+
+                                            <!-- Plus -->
+                                            <button
+                                                class="plus-btn flex items-center justify-center w-6 h-6 text-white bg-green-500 rounded-full hover:bg-green-600 transition"
+                                                data-id="<?= $item['id'] ?>">
+                                                <i class="fa-solid fa-plus text-xs"></i>
+                                            </button>
+
+                                        </div>
+                                    </td>
+
                                     <td class="px-4 py-2 font-semibold"><?= number_format($item['subtotal'], 2) ?> $</td>
                                     <td class="px-4 py-2">
                                         <form method="post" action="/user/cart/remove">
                                             <input type="hidden" name="product_id" value="<?= $item['id'] ?>">
                                             <button type="button" class="remove-btn bg-red-500 text-white px-4 py-2 rounded-sm cursor-pointer hover:bg-red-600" data-id="<?= $item['id'] ?>">Remove</button>
-
                                         </form>
                                     </td>
                                 </tr>
@@ -87,9 +108,38 @@ require_once __DIR__ . "/../layout/header.php";
                 })
                 .then(res => res.text())
                 .then(() => {
-                    // Reload cart or remove row from table
                     location.reload();
                 });
+        });
+    });
+
+    // Increase quantity
+    document.querySelectorAll(".plus-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+
+            fetch("/user/cart/increase", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "product_id=" + this.dataset.id
+                })
+                .then(() => location.reload());
+        });
+    });
+
+    // Decrease quantity
+    document.querySelectorAll(".minus-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+
+            fetch("/user/cart/decrease", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: "product_id=" + this.dataset.id
+                })
+                .then(() => location.reload());
         });
     });
 </script>

@@ -165,6 +165,37 @@ class userHomeController
         }
     }
 
+    public function increaseQty()
+    {
+        // session_start();
+
+        $id = $_POST['product_id'];
+
+        if (isset($_SESSION['cart'][$id])) {
+            $_SESSION['cart'][$id]++;
+        }
+
+        echo json_encode(["status" => "success"]);
+    }
+
+    public function decreaseQty()
+    {
+        // session_start();
+
+        $id = $_POST['product_id'];
+
+        if (isset($_SESSION['cart'][$id])) {
+            $_SESSION['cart'][$id]--;
+
+            if ($_SESSION['cart'][$id] <= 0) {
+                unset($_SESSION['cart'][$id]);
+            }
+        }
+
+        echo json_encode(["status" => "success"]);
+    }
+
+
 
     public function removeFromCart()
     {
