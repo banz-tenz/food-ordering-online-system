@@ -29,9 +29,9 @@ require_once __DIR__ . "/../layout/header.php";
                         <?php foreach ($orders as $index => $order): ?>
                             <tr class="border-b hover:bg-gray-50 transition">
                                 <td class="px-6 py-3"><?= $index + 1 ?></td>
-                                <td class="px-6 py-3 font-medium text-gray-800"><?= $order['id'] ?></td>
+                                <td class="px-6 py-3 font-medium text-gray-800"><?= $order['order_id'] ?></td>
                                 <td class="px-6 py-3 text-gray-600"><?= date('d-m-Y', strtotime($order['created_at'])) ?></td>
-                                <td class="px-6 py-3 font-semibold text-green-600">$<?= number_format($order['total_price'], 2) ?></td>
+                                <td class="px-6 py-3 font-semibold text-green-600">$<?= number_format($order['subtotal'], 2) ?></td>
                                 <td class="px-6 py-3">
                                     <?php
                                     $statusClass = match ($order['status']) {
@@ -46,7 +46,7 @@ require_once __DIR__ . "/../layout/header.php";
                                     </span>
                                 </td>
                                 <td class="px-6 py-3 text-center">
-                                    <a href="/user/order/details?id=<?= $order['id'] ?>"
+                                    <a href="/user/order/details?id=<?= $order['order_id'] ?>"
                                         class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-sm">
                                         View
                                     </a>

@@ -310,7 +310,8 @@ class userHomeController
             header("/user/create");
             exit();
         }
-        
+
+        $orders = $this->orderModel->findOrderByUserId($userId);
 
         require_once __DIR__ . "/../../view/user/order.php";
     }

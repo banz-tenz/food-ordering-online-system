@@ -72,27 +72,53 @@ class orderModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function createOrder($userId, $totalPrice, $status = 'pending'){
-        $sql = "INSERT INTO {$this->table} (user_id, total_price, status) VALUES(:userId, :totalPrice, :status)";
+    public function findOrderByUserId($id)
+    {
+        $sql = "SELECT o.id AS order_id,
+                   o.created_at,
+                   o.status,
+                   u.username,
+                   u.useremail,
+                   p.name AS product_name,
+                   p.price AS product_price,
+                   oi.quantity,
+                   (p.price * oi.quantity) AS subtotal
+            FROM orders o
+            JOIN users u ON u.id = o.user_id
+            JOIN order_items oi ON oi.order_id = o.id
+            JOIN products p ON p.id = oi.product_id
+            WHERE u.id = :userId
+            ORDER BY o.created_at DESC";
+
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([
-                'userId'=>$userId,
-                'totalPrice'=>$totalPrice,
-                'status'=> $status,
-            ]);
-        return $this->conn->lastInsertId();
-        
+        $stmt->execute(['userId' => $id]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
-    public function createOrderItems($orderId, $productId, $quantity, $subTotalPrice){
+    public function createOrder($userId, $totalPrice, $status = 'pending')
+    {
+        $sql = "INSERT INTO {$this->table} (user_id, total_price, status) VALUES(:userId, :totalPrice, :status)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([
+            'userId' => $userId,
+            'totalPrice' => $totalPrice,
+            'status' => $status,
+        ]);
+        return $this->conn->lastInsertId();
+    }
+
+
+    public function createOrderItems($orderId, $productId, $quantity, $subTotalPrice)
+    {
         $sql = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES(:orderId, :productId, :quantity, :subTotalPrice)";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([
-            'orderId'=>$orderId,
-            'productId'=>$productId,
-            'quantity'=>$quantity,
-            'subTotalPrice'=>$subTotalPrice,
+            'orderId' => $orderId,
+            'productId' => $productId,
+            'quantity' => $quantity,
+            'subTotalPrice' => $subTotalPrice,
         ]);
     }
 }
